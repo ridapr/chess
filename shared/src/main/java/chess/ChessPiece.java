@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -50,3 +51,15 @@ public class ChessPiece {
         throw new RuntimeException("Not implemented");
     }
 }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (o == null) return false;
+//        if (this.getClass() != o.getClass()) return false;
+//        if (this == o) return true;
+//
+//    }
+
+//    @Override
+//    public string toString() {
+//
+//    }

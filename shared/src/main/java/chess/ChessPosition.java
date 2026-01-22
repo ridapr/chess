@@ -8,9 +8,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
-    private int row;
-    private int col;
-    /** TODO error says may be final. find out what final means**/
+    private final int row;
+    private final int col;
 
     public ChessPosition(int row, int col) {
         this.row = row;
