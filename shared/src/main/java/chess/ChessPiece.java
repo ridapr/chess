@@ -115,7 +115,6 @@ public class ChessPiece {
         return moves;
     }
 
-
     // KING
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
@@ -275,8 +274,6 @@ public class ChessPiece {
             moves.add(new ChessMove(start, end, null));
         }
     }
-
-
 
     @Override
     public boolean equals(Object o) {
