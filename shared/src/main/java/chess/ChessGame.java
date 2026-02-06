@@ -112,7 +112,9 @@ public class ChessGame {
         board.addPiece(move.getEndPosition(), piece);
         board.addPiece(move.getStartPosition(), null);
 
-        // need pawn promotion
+        if (move.getPromotionPiece() != null) {
+            board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+        }
 
         // changes team
     }
