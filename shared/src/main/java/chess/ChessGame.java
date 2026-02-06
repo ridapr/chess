@@ -116,7 +116,7 @@ public class ChessGame {
             board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
         }
 
-        // changes team
+        turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
 
@@ -129,6 +129,46 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
 //        throw new RuntimeException("Not implemented");
 //        return true;
+//        return false;
+
+        ChessPosition kingPosition = null;
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+
+                if (piece != null && piece.getTeamColor() == teamColor && piece.getPieceType() == ChessPiece.PieceType.KING) {
+                    kingPosition = position;
+                    break;
+                }
+            }
+            if (kingPosition != null) {
+                break;
+            }
+        }
+        if (kingPosition == null) {
+            return false; // king does not exist, to debug
+        }
+
+        TeamColor enemyColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col<= 8; col ++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+
+                if (piece != null && piece.getTeamColor() == enemyColor) {
+                    // get all possible moves
+                    Collection<ChessMove> moves = piece.pieceMoves(board, position);
+                    // check if move attacks king
+                    for (ChessMove move : moves) {
+                        if (move.getEndPosition().equals(kingPosition)) {
+                            return true; //king in check
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
