@@ -53,7 +53,41 @@ public class ChessGame {
      */
 
 
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) { throw new RuntimeException("Not implemented"); }
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        ChessPiece piece = board.getPiece(startPosition);
+
+        // no piece there
+        if (piece == null) {
+            return null;
+        }
+
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> valid = new ArrayList<>();
+
+        // make temp move to see what is allowed
+        for (ChessMove move: possibleMoves) {
+            ChessPiece movingPiece = board.getPiece(move.getStartPosition());
+            ChessPiece capturedPiece = board.getPiece(move.getEndPosition());
+
+            board.addPiece(move.getEndPosition(), movingPiece);
+            board.addPiece(move.getStartPosition(), null);
+
+            if (move.getPromotionPiece() != null) {
+                board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+            }
+
+            boolean inCheck = isInCheck(piece.getTeamColor());
+
+            // undo moves
+            board.addPiece(move.getStartPosition(), movingPiece);
+            board.addPiece(move.getEndPosition(), capturedPiece);
+
+            if (!inCheck) {
+                valid.add(move);
+            }
+        }
+        return valid;
+    }
 
     /**
      * Makes a move in a chess game
@@ -70,13 +104,17 @@ public class ChessGame {
         if (piece.getTeamColor() != turn) {
             throw new InvalidMoveException("not your turn");
         }
-//        Collection<ChessMove> valid = validMoves(move.getStartPosition());
-//        if (valid == null ||  {
-
-//        }
+        Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        if (valid == null || !valid.contains(move)) {
+            throw new InvalidMoveException("invalid move");
+        }
 
         board.addPiece(move.getEndPosition(), piece);
         board.addPiece(move.getStartPosition(), null);
+
+        // need pawn promotion
+
+        // changes team
     }
 
 
@@ -87,7 +125,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+//        throw new RuntimeException("Not implemented");
+//        return true;
+        return false;
     }
 
     /**
