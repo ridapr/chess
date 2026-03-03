@@ -24,8 +24,16 @@ public class Server {
         // Register your endpoints and exception handlers here.
 
         javalin.delete("/db", this::handleClear);
+        javalin.post("/user", this::handleRegister);
+        javalin.post("/session", this::handleLogin);
+        javalin.delete("/session", this::handleLogout);
+        javalin.get("/game", this::handleListGames);
+        javalin.post("/game", this::handleCreateGame);
+        javalin.put("/game", this::handleJoinGame);
 
-        javalin.exception(ServiceException.class, this::exceptionHandler);
+
+
+         javalin.exception(ServiceException.class, this::exceptionHandler);
     }
 
     public int run(int desiredPort) {
@@ -46,4 +54,30 @@ public class Server {
         clearService.clear();
         context.result("{}");
     }
+
+    private void handleRegister(Context context) throws ServiceException {
+
+    }
+
+    private void handleLogin(Context context) throws ServiceException {
+
+    }
+
+    private void handleLogout(Context context) throws ServiceException {
+
+    }
+
+    private void handleListGames(Context context) throws ServiceException {
+
+    }
+
+    private void handleCreateGame(Context context) throws ServiceException {
+
+    }
+
+    private void handleJoinGame(Context context) throws ServiceException {
+
+    }
+
+
 }
