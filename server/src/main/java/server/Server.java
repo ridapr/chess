@@ -65,7 +65,9 @@ public class Server {
     }
 
     private void handleLogin(Context context) throws ServiceException {
-
+        var req = new Gson().fromJson(context.body(), UserService.LoginRequest.class);
+        var result = userService.login(req);
+        context.result(new Gson().toJson(result));
     }
 
     private void handleLogout(Context context) throws ServiceException {
