@@ -3,6 +3,7 @@ package server;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import service.ClearService;
+import service.UserService;
 import service.ServiceException;
 
 import io.javalin.*;
@@ -16,7 +17,9 @@ public class Server {
 
      // will need one for each servcie
     private final DataAccess db = new MemoryDataAccess();
+
     private final ClearService clearService = new ClearService(db);
+    private final UserService userService = new UserService(db);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -56,7 +59,9 @@ public class Server {
     }
 
     private void handleRegister(Context context) throws ServiceException {
-
+        var req = new Gson().fromJson(context.body(), UserService.RegisterRequest.class);
+        var result = userService.register(req);
+        context.result(new Gson().toJson(result));
     }
 
     private void handleLogin(Context context) throws ServiceException {
