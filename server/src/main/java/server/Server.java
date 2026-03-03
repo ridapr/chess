@@ -71,7 +71,9 @@ public class Server {
     }
 
     private void handleLogout(Context context) throws ServiceException {
-
+        String token = context.header("authorization");
+        userService.logout(token);
+        context.result("{}");
     }
 
     private void handleListGames(Context context) throws ServiceException {

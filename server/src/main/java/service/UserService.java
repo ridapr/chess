@@ -49,9 +49,6 @@ public class UserService {
     }
 
 
-
-
-
     public LoginResult login(LoginRequest req) throws ServiceException {
         if (req.username() == null || req.username().isBlank() ||
             req.password() == null || req.password().isBlank()) {
@@ -80,12 +77,20 @@ public class UserService {
     }
 
 
-
-
-
-
     public void logout(String authToken) throws ServiceException {
+        if (authToken == null || authToken.isBlank()) {
+            throw new ServiceException(401, "Error: unauthorized");
+        }
+        try {
+            AuthData auth = db.getAuth(authToken);
+            if (auth == null) {
+                throw new ServiceException(401, "Error: unauthorized");
+            }
+            db.deleteAuth(authToken);
 
+        } catch (DataAccessException exception) {
+            throw new ServiceException(500, "Error: " + exception.getMessage());
+        }
     }
 
 
