@@ -94,7 +94,10 @@ public class Server {
     }
 
     private void handleJoinGame(Context context) throws ServiceException {
-
+        String token = context.header("authorization");
+        var req = new Gson().fromJson(context.body(), GameService.JoinGameRequest.class);
+        gameService.joinGame(token, req);
+        context.result("{}");
     }
 
 

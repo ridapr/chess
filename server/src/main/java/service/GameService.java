@@ -1,10 +1,12 @@
 package service;
 
 import chess.ChessGame;
+
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
-import model.AuthData;
+
 import model.GameData;
+import model.AuthData;
 
 import java.util.Collection;
 
@@ -44,6 +46,54 @@ public class GameService {
             throw new ServiceException(500, "Error: " + exception.getMessage());
         }
 
+    }
+
+
+    public void joinGame(String authToken, JoinGameRequest req) throws ServiceException {
+        AuthData auth = userService.validateToken(authToken);
+
+        if (req.playerColor() == null || req.gameID() <= 0) {
+            throw new ServiceException(400, "Error: bad request");
+        }
+
+        String color = req.playerColor().toUpperCase();
+        if (!color.equals("WHITE") && !color.equals("BLACK")) {
+            throw new ServiceException(400, "Error: bad request. Not White or Black");
+        }
+
+        GameData game;
+        try {
+            game = db.getGame(req.gameID());
+        } catch (DataAccessException exception) {
+            throw new ServiceException(500, "Error: " + exception.getMessage());
+        }
+
+        if (game == null) {
+            throw new ServiceException(400, "Error: bad request");
+        }
+
+        String newWhite = game.whiteUsername();
+        String newBlack = game.blackUsername();
+
+        // check if already taken
+        if (color.equals("WHITE")) {
+            if (newWhite != null) {
+                throw new ServiceException(403, "Error: already taken");
+
+            }
+            newWhite = auth.username();
+        } else {
+            if (newBlack != null) {
+                throw new ServiceException(403, "ERror: already taken");
+            }
+            newBlack = auth.username();
+        }
+
+        try {
+            db.updateGame(new GameData(game.gameID(), newWhite, newBlack, game.gameName(), game.game()));
+        } catch (DataAccessException exception) {
+            throw new ServiceException(500, "Error: " + exception.getMessage());
+        }
     }
 
 
