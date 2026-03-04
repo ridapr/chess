@@ -157,12 +157,21 @@ public class ChessGame {
                     // get all possible moves
                     Collection<ChessMove> moves = piece.pieceMoves(board, position);
                     // check if move attacks king
-                    for (ChessMove move : moves) {
-                        if (move.getEndPosition().equals(kingPosition)) {
-                            return true; //king in check
-                        }
+                    if (pieceAttacksKing(piece, position, kingPosition)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    // useless helper to get down to 4 layers of nesting for stupid "quality check"
+    // even though this makes the code so much harder to understand
+    private boolean pieceAttacksKing(ChessPiece piece, ChessPosition position, ChessPosition kingPosition) {
+        for (ChessMove move : piece.pieceMoves(board, position)) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
             }
         }
         return false;
