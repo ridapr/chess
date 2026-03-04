@@ -40,7 +40,8 @@ public class GameService {
         }
 
         try {
-            GameData created = db.createGame(new GameData(0, null, null, req.gameName(), new ChessGame()));
+            GameData created = db.createGame(new GameData(
+                    0, null, null, req.gameName(), new ChessGame()));
             return new CreateGameResult(created.gameID());
         } catch (DataAccessException exception) {
             throw new ServiceException(500, "Error: " + exception.getMessage());

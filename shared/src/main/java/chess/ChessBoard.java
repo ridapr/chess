@@ -70,9 +70,9 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null) return false;
-        if (this.getClass() != o.getClass()) return false;
-        if (this == o) return true;
+        if (o == null) { return false; }
+        if (this.getClass() != o.getClass()) { return false; }
+        if (this == o) { return true; }
         ChessBoard that = (ChessBoard) o;
         return Arrays.deepEquals(squares, that.squares);
     }

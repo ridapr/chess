@@ -7,7 +7,6 @@ import model.UserData;
 
 import java.util.UUID;
 
-
 public class UserService {
     private final DataAccess db;
 
@@ -19,7 +18,6 @@ public class UserService {
     public record RegisterResult(String username, String authToken) {}
     public record LoginRequest(String username, String password) {}
     public record LoginResult(String username, String authToken) {}
-
 
     private static String generateToken() {
         return UUID.randomUUID().toString();
@@ -48,7 +46,6 @@ public class UserService {
         return new RegisterResult(req.username(), token);
     }
 
-
     public LoginResult login(LoginRequest req) throws ServiceException {
         if (req.username() == null || req.username().isBlank() ||
             req.password() == null || req.password().isBlank()) {
@@ -76,21 +73,7 @@ public class UserService {
         return new LoginResult(req.username(), token);
     }
 
-
     public void logout(String authToken) throws ServiceException {
-//        if (authToken == null || authToken.isBlank()) {
-//            throw new ServiceException(401, "Error: unauthorized");
-//        }
-//        try {
-//            AuthData auth = db.getAuth(authToken);
-//            if (auth == null) {
-//                throw new ServiceException(401, "Error: unauthorized");
-//            }
-//            db.deleteAuth(authToken);
-//
-//        } catch (DataAccessException exception) {
-//            throw new ServiceException(500, "Error: " + exception.getMessage());
-//        }
         validateToken(authToken);
         try {
             db.deleteAuth(authToken);
@@ -98,8 +81,6 @@ public class UserService {
             throw new ServiceException(500, "Error: " + exception.getMessage());
         }
     }
-
-
 
     protected AuthData validateToken(String authToken) throws ServiceException {
         if (authToken == null || authToken.isBlank()) {
@@ -115,6 +96,4 @@ public class UserService {
             throw new ServiceException(500, "Error: " + exception.getMessage());
         }
     }
-
-
 }

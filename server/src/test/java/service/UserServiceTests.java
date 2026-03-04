@@ -28,13 +28,15 @@ public class UserServiceTests {
     void registerDuplicate() throws ServiceException {
         userService.register(new UserService.RegisterRequest("foo", "password", "foo@example.com"));
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> userService.register(new UserService.RegisterRequest("foo", "otherpassword", "foo2@example.com")));
+        ServiceException exception = assertThrows(ServiceException.class, () -> userService.register(
+                new UserService.RegisterRequest("foo", "otherpassword", "foo2@example.com")));
 
         assertEquals(403, exception.statusCode());
     }
      @Test
     void registerEmptyField() throws ServiceException {
-        ServiceException ex = assertThrows(ServiceException.class, () -> userService.register(new UserService.RegisterRequest("", "password", "foo@example.com")));
+        ServiceException ex = assertThrows(ServiceException.class, () -> userService.register(
+                new UserService.RegisterRequest("", "password", "foo@example.com")));
         assertEquals(400, ex.statusCode());
     }
 
@@ -54,13 +56,15 @@ public class UserServiceTests {
     void loginWrongPassword() throws ServiceException {
         userService.register(new UserService.RegisterRequest("foo", "password", "foo@example.com"));
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> userService.login(new UserService.LoginRequest("foo", "wrongpassword")));
+        ServiceException exception = assertThrows(ServiceException.class, () -> userService.login(
+                new UserService.LoginRequest("foo", "wrongpassword")));
 
         assertEquals(401, exception.statusCode());
     }
     @Test
     void loginUnknownUser() {
-        ServiceException exception = assertThrows(ServiceException.class, () -> userService.login(new UserService.LoginRequest("foo", "password")));
+        ServiceException exception = assertThrows(ServiceException.class, () -> userService.login(
+                new UserService.LoginRequest("foo", "password")));
 
         assertEquals(401, exception.statusCode());
     }

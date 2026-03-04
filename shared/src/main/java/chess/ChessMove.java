@@ -39,9 +39,9 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null) return false;
-        if (o.getClass() != this.getClass()) return false;
-        if (this == o) return true;
+        if (o == null) { return false; }
+        if (o.getClass() != this.getClass()) { return false; }
+        if (this == o) { return true; }
         ChessMove chessMove = (ChessMove) o;
         return Objects.equals(startPosition, chessMove.startPosition)
                 && Objects.equals(chessMove.endPosition, endPosition)

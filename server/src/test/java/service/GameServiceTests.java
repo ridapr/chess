@@ -32,14 +32,16 @@ public class GameServiceTests {
     }
     @Test
     void createGameInvalidToken() {
-        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.createGame("badToken", new GameService.CreateGameRequest("Game")));
+        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.createGame(
+                "badToken", new GameService.CreateGameRequest("Game")));
 
         assertEquals(401, ex.statusCode());
     }
 
     @Test
     void createGameNoName() {
-        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.createGame(validToken, new GameService.CreateGameRequest("")));
+        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.createGame(
+                validToken, new GameService.CreateGameRequest("")));
 
         assertEquals(400, ex.statusCode());
     }
@@ -77,13 +79,15 @@ public class GameServiceTests {
 
         var player2 = userService.register(new UserService.RegisterRequest("player2", "password", "p2@example.com"));
 
-        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.joinGame(player2.authToken(), new GameService.JoinGameRequest("WHITE", created.gameID())));
+        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.joinGame(
+                player2.authToken(), new GameService.JoinGameRequest("WHITE", created.gameID())));
 
         assertEquals(403, ex.statusCode());
     }
     @Test
     void joinGameWrongGameID() {
-        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.joinGame(validToken, new GameService.JoinGameRequest("BLACK", 9999)));
+        ServiceException ex = assertThrows(ServiceException.class, () -> gameService.joinGame(
+                validToken, new GameService.JoinGameRequest("BLACK", 9999)));
 
         assertEquals(400, ex.statusCode());
     }

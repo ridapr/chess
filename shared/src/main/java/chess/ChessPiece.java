@@ -79,7 +79,7 @@ public class ChessPiece {
     private boolean canMoveTo(ChessBoard board, ChessPosition position) {
         ChessPiece pieceAtEnd = board.getPiece(position);
 
-        if (pieceAtEnd == null) return true;
+        if (pieceAtEnd == null) { return true; }
 
         return pieceAtEnd.getTeamColor() != this.pieceColor;
     }
@@ -277,9 +277,9 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null) return false;
-        if (this.getClass() != o.getClass()) return false;
-        if (this == o) return true;
+        if (o == null) { return false; }
+        if (this.getClass() != o.getClass()) { return false; }
+        if (this == o) { return true; }
         ChessPiece that = (ChessPiece) o;
         return pieceColor == that.pieceColor && type == that.type;
     }
