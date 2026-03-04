@@ -115,6 +115,22 @@ public class ChessPiece {
         return moves;
     }
 
+    // helper for stupid code deduplication requirement for "code quality"
+    private void processDirections(ChessBoard board, ChessPosition myPosition, int row, int col,
+                                   int[][] directions, Collection<ChessMove> moves) {
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
+
+            if (isOnBoard(newRow, newCol)) {
+                ChessPosition newPos = new ChessPosition(newRow, newCol);
+                if (canMoveTo(board, newPos)) {
+                    moves.add(new ChessMove(myPosition,newPos, null));
+                }
+            }
+        }
+    }
+
     // KING
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
@@ -127,17 +143,7 @@ public class ChessPiece {
                 {-1, -1}, {-1, 0}, {-1, 1}
         };
 
-        for (int[] dir : directions) {
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
-
-            if (isOnBoard(newRow, newCol)) {
-                ChessPosition newPos = new ChessPosition(newRow, newCol);
-                if (canMoveTo(board, newPos)) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
-                }
-            }
-        }
+        processDirections(board, myPosition, row, col, directions, moves);
         return moves;
     }
 
@@ -200,17 +206,19 @@ public class ChessPiece {
                    {-2, -1}, {-2, 1}
         };
 
-        for (int[] dir : knightDirections) {
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
+//        for (int[] dir : knightDirections) {
+//            int newRow = row + dir[0];
+//            int newCol = col + dir[1];
+//
+//            if (isOnBoard(newRow, newCol)) {
+//                ChessPosition newPos = new ChessPosition(newRow, newCol);
+//                if (canMoveTo(board, newPos)) {
+//                    moves.add(new ChessMove(myPosition, newPos, null));
+//                }
+//            }
+//        }
+        processDirections(board, myPosition, row, col, knightDirections, moves);
 
-            if (isOnBoard(newRow, newCol)) {
-                ChessPosition newPos = new ChessPosition(newRow, newCol);
-                if (canMoveTo(board, newPos)) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
-                }
-            }
-        }
         return moves;
     }
 
