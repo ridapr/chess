@@ -205,18 +205,6 @@ public class ChessPiece {
                 {-1, -2},      {-1, 2},
                    {-2, -1}, {-2, 1}
         };
-
-//        for (int[] dir : knightDirections) {
-//            int newRow = row + dir[0];
-//            int newCol = col + dir[1];
-//
-//            if (isOnBoard(newRow, newCol)) {
-//                ChessPosition newPos = new ChessPosition(newRow, newCol);
-//                if (canMoveTo(board, newPos)) {
-//                    moves.add(new ChessMove(myPosition, newPos, null));
-//                }
-//            }
-//        }
         processDirections(board, myPosition, row, col, knightDirections, moves);
 
         return moves;
