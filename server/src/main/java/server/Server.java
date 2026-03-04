@@ -4,12 +4,15 @@ import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import service.ClearService;
 import service.UserService;
+import service.GameService;
 import service.ServiceException;
+import model.GameData;
 
 import io.javalin.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
 import java.util.Map;
+import java.util.Collection;
 
 public class Server {
 
@@ -20,6 +23,7 @@ public class Server {
 
     private final ClearService clearService = new ClearService(db);
     private final UserService userService = new UserService(db);
+    private final GameService gameService = new GameService(db, userService);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -77,11 +81,16 @@ public class Server {
     }
 
     private void handleListGames(Context context) throws ServiceException {
-
+        String token = context.header("authorization");
+        Collection<GameData> games = gameService.listGames(token);
+        context.result(new Gson().toJson(Map.of("games", games)));
     }
 
     private void handleCreateGame(Context context) throws ServiceException {
-
+        String token = context.header("authorization");
+        var req = new Gson().fromJson(context.body(), GameService.CreateGameRequest.class);
+        var result = gameService.createGame(token, req);
+        context.result(new Gson().toJson(result));
     }
 
     private void handleJoinGame(Context context) throws ServiceException {
