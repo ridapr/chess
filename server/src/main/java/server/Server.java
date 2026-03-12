@@ -1,7 +1,9 @@
 package server;
 
 import dataaccess.DataAccess;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySQLDataAccess;
 import service.ClearService;
 import service.UserService;
 import service.GameService;
@@ -19,13 +21,33 @@ public class Server {
     private final Javalin javalin;
 
      // will need one for each servcie
-    private final DataAccess db = new MemoryDataAccess();
+//    private final DataAccess db = new MemoryDataAccess();
+//
+//    private final ClearService clearService = new ClearService(db);
+//    private final UserService userService = new UserService(db);
+//    private final GameService gameService = new GameService(db, userService);
 
-    private final ClearService clearService = new ClearService(db);
-    private final UserService userService = new UserService(db);
-    private final GameService gameService = new GameService(db, userService);
+    private final DataAccess db;
+    private final ClearService clearService;
+    private final UserService userService;
+    private final GameService gameService;
 
     public Server() {
+        DataAccess dataAccess;
+        try {
+            dataAccess = new MySQLDataAccess();
+        } catch (DataAccessException ex) {
+            throw new RuntimeException("Failed to initialize db: " + ex.getMessage(), ex);
+        }
+        db = dataAccess;
+        clearService = new ClearService(db);
+        userService = new UserService(db);
+        gameService = new GameService(db, userService);
+
+
+
+
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
