@@ -74,11 +74,37 @@ public class MySQLDataAccess implements DataAccess {
 
     @Override
     public void createUser(UserData user) throws DataAccessException {
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        try {
+            executeUpdate(statement, user.username(), hashedPassword, user.email());
+        } catch (DataAccessException ex) {
+            // 1602 means duplicate
+            if (ex.getMessage().contains("Duplicate entry") || ex.getMessage().contains("1602")) {
+                throw new DataAccessException("Error: username already taken");
 
+            }
+            throw ex;
+        }
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        var statement = "SELECT username, password, email FROM users WHERE username=?";
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(statement)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new UserData(
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("email")
+                    );
+                }
+            }
+        }catch (SQLException ex) {
+            throw new DataAccessException("UNable to read user: " + ex.getMessage(), ex);
+        }
         return null;
     }
 
