@@ -35,7 +35,11 @@ public class UserService {
         try {
             db.createUser(new UserData(req.username(), req.password(), req.email()));
         } catch (DataAccessException exception) {
-            throw new ServiceException(403, "Error: username already taken");
+            if (exception.getMessage().contains("already taken")) {
+
+                throw new ServiceException(403, "Error: username already taken");
+            }
+            throw new ServiceException(500, "Error: " + exception.getMessage());
         }
 
         String token = generateToken();
