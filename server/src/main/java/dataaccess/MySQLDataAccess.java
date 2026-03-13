@@ -150,14 +150,6 @@ public class MySQLDataAccess implements DataAccess {
             ps.setInt(1, gameID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-//                    int id = rs.getInt("gameID");
-//                    String whiteUsername = rs.getString("whiteUsername");
-//                    String blackUsername = rs.getString("blackUsername");
-//                    String gameName = rs.getString("gameName");
-//                    String json = rs.getString("game");
-//
-//                    ChessGame chessGame = gson.fromJson(json, ChessGame.class);
-//                    return new GameData(id, whiteUsername, blackUsername, gameName, chessGame);
                     return gameInfo(rs);
 
                 }

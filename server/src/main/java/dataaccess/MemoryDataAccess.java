@@ -4,6 +4,8 @@ import model.AuthData;
 import model.UserData;
 import model.GameData;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
@@ -27,9 +29,10 @@ public class MemoryDataAccess implements DataAccess {
     @Override
     public void createUser(UserData user) throws DataAccessException {
         if (users.containsKey(user.username())) {
-            throw new DataAccessException("User already exists: " + user.username());
+            throw new DataAccessException("User already taken: " + user.username());
         }
-        users.put(user.username(), user);
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        users.put(user.username(), new UserData(user.username(), hashedPassword, user.email()));
     }
 
     @Override
