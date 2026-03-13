@@ -22,7 +22,6 @@ public class MySQLDataAccess implements DataAccess {
         configureDatabase();
     }
 
-    // copied directly from petshop for now as placeholder
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  users (
@@ -136,12 +135,34 @@ public class MySQLDataAccess implements DataAccess {
 
 
     @Override
-    public GameData createGame(GameData gaem) throws DataAccessException {
-        return null;
+    public GameData createGame(GameData game) throws DataAccessException {
+        var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+        String json = gson.toJson(game.game());
+        int id = executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json);
+        return new GameData(id, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
+        var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(statement)) {
+            ps.setInt(1, gameID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("gameID");
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    String gameName = rs.getString("gameName");
+                    String json = rs.getString("game");
+
+                    ChessGame chessGame = gson.fromJson(json, ChessGame.class);
+                    return new GameData(id, whiteUsername, blackUsername, gameName, chessGame);
+
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to read game: " + ex.getMessage(), ex);
+        }
         return null;
     }
 
