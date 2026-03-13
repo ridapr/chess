@@ -110,6 +110,7 @@ public class SQLDataAccessTests {
         assertNull(tests.getAuth("delete-token"), "Auth token should be null after deletion");
     }
 
+    @Test
     void deleteAuthNegative() {
         assertDoesNotThrow(() -> tests.deleteAuth("ghost-token"),
                 "Deleting no token should not throw");

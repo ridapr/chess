@@ -165,7 +165,8 @@ public class MySQLDataAccess implements DataAccess {
         var results = new ArrayList<GameData>();
         var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
 
-        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(statement); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(statement);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 results.add(gameInfo(rs));
             }

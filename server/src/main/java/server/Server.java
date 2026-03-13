@@ -20,13 +20,6 @@ public class Server {
 
     private final Javalin javalin;
 
-     // will need one for each servcie
-//    private final DataAccess db = new MemoryDataAccess();
-//
-//    private final ClearService clearService = new ClearService(db);
-//    private final UserService userService = new UserService(db);
-//    private final GameService gameService = new GameService(db, userService);
-
     private final DataAccess db;
     private final ClearService clearService;
     private final UserService userService;
