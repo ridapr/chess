@@ -64,7 +64,6 @@ public class MySQLDataAccess implements DataAccess {
         }
     }
 
-    // failing standard api test until i make new create user
     @Override
     public void clear() throws DataAccessException {
         for (String table: new String[]{"auth" ,"games", "users"}) {
@@ -79,10 +78,8 @@ public class MySQLDataAccess implements DataAccess {
         try {
             executeUpdate(statement, user.username(), hashedPassword, user.email());
         } catch (DataAccessException ex) {
-            // 1602 means duplicate
-            if (ex.getMessage().contains("Duplicate entry") || ex.getMessage().contains("1602")) {
+            if (ex.getMessage().contains("Duplicate entry")) {
                 throw new DataAccessException("Error: username already taken");
-
             }
             throw ex;
         }
@@ -96,9 +93,7 @@ public class MySQLDataAccess implements DataAccess {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new UserData(
-                            rs.getString("username"),
-                            rs.getString("password"),
-                            rs.getString("email")
+                            rs.getString("username"), rs.getString("password"), rs.getString("email")
                     );
                 }
             }
@@ -112,17 +107,30 @@ public class MySQLDataAccess implements DataAccess {
 
     @Override
     public void createAuth(AuthData auth) throws DataAccessException {
-
+        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        executeUpdate(statement, auth.authToken(), auth.username());
     }
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
+        var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
+        try (Connection conn = DatabaseManager.getConnection(); PreparedStatement ps = conn.prepareStatement(statement)) {
+            ps.setString(1, authToken);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new AuthData(rs.getString("authToken"), rs.getString("username"));
+                }
+            }
+        }catch (SQLException exception) {
+            throw new DataAccessException("Unable to read auth: " + exception.getMessage(), exception);
+        }
         return null;
+
     }
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-
+        executeUpdate("DELETE FROM auth WHERE authToken=?", authToken);
     }
 
 
