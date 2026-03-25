@@ -33,10 +33,6 @@ public class ServerFacadeTests {
     void clear() throws Exception {
         facade.clear();
     }
-//    @Test
-//    public void sampleTest() {
-//        Assertions.assertTrue(true);
-//    }
 
     @Test
     void registerPositive() throws Exception {

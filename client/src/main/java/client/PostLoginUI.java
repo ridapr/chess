@@ -6,6 +6,7 @@ import chess.ChessBoard;
 import model.GameData;
 import model.AuthData;
 import ui.DrawBoardUI;
+import ui.EscapeSequences;
 
 import java.util.Scanner;
 import java.util.Collection;
@@ -38,7 +39,7 @@ public class PostLoginUI {
                 case "list" -> handleList();
                 case "create" -> handleCreate();
                 case "play" -> handlePlay();
-                case "observe" -> System.out.println("observe wip");
+                case "observe" -> handleObserve();
                 case "logout" -> { handleLogout(); return true; }
                 case "quit" -> { return false;}
                 default -> System.out.println("Unknown command. Type 'help' for commands.");
@@ -48,15 +49,24 @@ public class PostLoginUI {
     }
 
     private void printHelp() {
-        System.out.println("""
-          create - create a new game
-          list - list all games
-          play - join a game as a player
-          observe - observe a game
-          logout - log out
-          quit - exit the program
-          help - show these commands
-        """);
+        System.out.println(
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  help" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - show these commands\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  create" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - create a new game\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  list" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - list all games\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  play" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - join a game\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  observe" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - observe a game\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  logout" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - log out\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  quit" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE  + " - exit the program\n" +
+            EscapeSequences.RESET_TEXT_COLOR
+        );
+
     }
 
     private void handleLogout() {
@@ -112,13 +122,7 @@ public class PostLoginUI {
         }
 
         System.out.print("Game number: ");
-        String line = scanner.nextLine().trim();
-        int num = 0;
-        try {
-            num = Integer.parseInt(line);
-        } catch (NumberFormatException ex) {
-            num = -1;
-        }
+        int num = readInt();
         if (num < 1 || num > gameList.size()) {
             System.out.println("Error: invalid game number.");
             return;
@@ -142,11 +146,40 @@ public class PostLoginUI {
     }
 
 
+    private void handleObserve() {
+        if (gameList.isEmpty()) {
+            System.out.println("Run 'list' first to see available games.");
+            return;
+        }
+
+        System.out.print("Game number: ");
+        int num = readInt();
+        if (num < 1 || num > gameList.size()) {
+            System.out.println("Error: invalid game number.");
+            return;
+        }
+
+        GameData game = gameList.get(num - 1);
+        System.out.println("Observing game '" + game.gameName() + "'.");
+        drawBoard("WHITE");
+
+    }
+
+
     private void drawBoard(String color) {
         ChessBoard board = new ChessBoard();
         board.resetBoard();
         DrawBoardUI.draw(board, color);
     }
 
+    // refacator for code quality check
+    private int readInt() {
+        String line = scanner.nextLine().trim();
+        try {
+            return Integer.parseInt(line);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
 
 }

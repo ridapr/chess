@@ -1,8 +1,8 @@
 package client;
 
 import model.AuthData;
-
 import java.util.Scanner;
+import ui.EscapeSequences;
 
 public class PreLoginUI {
     private final ServerFacade server;
@@ -38,12 +38,17 @@ public class PreLoginUI {
     }
 
     private void printHelp() {
-        System.out.println("""
-                help - shows these command options
-                login - log in to an existing account
-                register - create a new account
-                quit - exit the program
-                """);
+        System.out.println(
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  register" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - create a new account\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  login" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - login to an existing account\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  quit" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - exit the program\n" +
+            EscapeSequences.SET_TEXT_COLOR_YELLOW + "  help" +
+            EscapeSequences.SET_TEXT_COLOR_WHITE + " - show this help text\n" +
+            EscapeSequences.RESET_TEXT_COLOR
+        );
     }
 
     private AuthData handleLogin() {
@@ -59,7 +64,6 @@ public class PreLoginUI {
 
         try {
             AuthData auth = server.login(username, password);
-//            System.out.println("Logged in as " + auth.username() + ".");
             return auth;
         } catch (ClientException ex) {
             System.out.println(ex.getMessage());
