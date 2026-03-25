@@ -10,8 +10,8 @@ import java.net.*;
 import java.io.*;
 
 public class ServerFacade {
-    private String baseUrl;
-    private Gson gson = new Gson();
+    private final String baseUrl;
+    private final Gson gson = new Gson();
 
 
     public ServerFacade(int port) {
@@ -36,12 +36,17 @@ public class ServerFacade {
 
 
 
-    public Collection<GameData> listGames() throws ClientException {
-        return null;
+    public Collection<GameData> listGames(String authToken) throws ClientException {
+        record ListGamesResponse(Collection<GameData> games) {}
+        var response = request("GET", "/game", null, authToken, ListGamesResponse.class);
+        return response.games();
     }
 
-    public int createGame() throws ClientException {
-        return 0;
+    public int createGame(String gameName, String authToken) throws ClientException {
+        var body = Map.of("gameName", gameName);
+        record CreateGameResponse(int gameID) {}
+        var response = request("POST", "/game", body, authToken, CreateGameResponse.class);
+        return response.gameID();
     }
 
     public void joinGame() throws ClientException {

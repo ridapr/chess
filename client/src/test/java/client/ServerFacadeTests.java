@@ -3,9 +3,11 @@ package client;
 import org.junit.jupiter.api.*;
 import server.Server;
 
+import model.GameData;
 import model.AuthData;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Collection;
 
 
 public class ServerFacadeTests {
@@ -78,6 +80,31 @@ public class ServerFacadeTests {
 
 
 
+
+
+    @Test
+    void createGamePositive() throws Exception {
+        AuthData auth = facade.register("foo", "password", "foo@e.com");
+        int gameID = facade.createGame("My Game", auth.authToken());
+        assertTrue(gameID > 0);
+    }
+    @Test
+    void createGameNegativeUnathorized() {
+        assertThrows(ClientException.class, () -> facade.createGame("My game", "notoken"));
+    }
+
+    @Test
+    void listGamesPositive() throws Exception {
+         AuthData auth = facade.register("coug", "password", "coug@e.com");
+        facade.createGame("game 1", auth.authToken());
+        facade.createGame("game 2", auth.authToken());
+        Collection<GameData> games = facade.listGames(auth.authToken());
+        assertEquals(2, games.size());
+    }
+    @Test
+    void listGamesNegUnauthorized() {
+        assertThrows(ClientException.class, () -> facade.listGames("notoken"));
+    }
 
 
 
