@@ -107,5 +107,20 @@ public class ServerFacadeTests {
     }
 
 
+    @Test
+    void joinGamePositive() throws Exception {
+        AuthData auth = facade.register("coug", "password", "coug@e.com");
+        int gameID = facade.createGame("game 1", auth.authToken());
+        assertDoesNotThrow(() -> facade.joinGame(gameID, "WHITE", auth.authToken()));
+    }
+    @Test
+    void joinGameNegativeColorTaken() throws Exception {
+        AuthData auth1 = facade.register("coug", "password1", "coug@e.com");
+        AuthData auth2 = facade.register("cosmo", "password2", "cosmo@e.com");
+        int gameID = facade.createGame("game1", auth1.authToken());
+        facade.joinGame(gameID, "WHITE", auth1.authToken());
+        assertThrows(ClientException.class, () -> facade.joinGame(gameID, "WHITE", auth2.authToken()));
+    }
+
 
 }

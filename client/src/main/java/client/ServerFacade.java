@@ -49,8 +49,9 @@ public class ServerFacade {
         return response.gameID();
     }
 
-    public void joinGame() throws ClientException {
-
+    public void joinGame(int gameID, String playerColor, String authToken) throws ClientException {
+        var body = Map.of("gameID", gameID, "playerColor", playerColor);
+        request("PUT", "/game", body, authToken, Void.class);
 
     }
 
