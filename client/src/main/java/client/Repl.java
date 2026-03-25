@@ -18,11 +18,16 @@ public class Repl {
         while (true) {
             AuthData auth = new PreLoginUI(server, scanner).run();
             if (auth == null) {
-                System.out.println("Goodbye");
+                System.out.println("Goodbye (from logged out");
                 return;
             }
 
             // post log in ui
+            boolean returnToPreLoginUI = new PostLoginUI(server, scanner, auth).run();
+            if (!returnToPreLoginUI) {
+                System.out.println("Goodbye(from logged in)");
+                return;
+            }
         }
 
     }
