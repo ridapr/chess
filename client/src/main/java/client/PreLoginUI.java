@@ -28,7 +28,8 @@ public class PreLoginUI {
                 case "quit" -> { return null; }
                 case "register" -> { AuthData auth = handleRegister();
                                    if (auth != null) {return auth; } }
-                case "login" -> System.out.println("wip login");
+                case "login" -> { AuthData auth = handleLogin();
+                                 if (auth != null) { return auth; } }
 
                 default -> System.out.println("Unknown Command. Type 'help' to see commands");
 
@@ -43,6 +44,27 @@ public class PreLoginUI {
                 register - create a new account
                 quit - exit the program
                 """);
+    }
+
+    private AuthData handleLogin() {
+        System.out.print("Username: ");
+        String username = scanner.nextLine().trim();
+        System.out.print("Password: ");
+        String password = scanner.nextLine().trim();
+
+        if (username.isBlank() || password.isBlank()) {
+            System.out.println("Error: username and password are required.");
+            return null;
+        }
+
+        try {
+            AuthData auth = server.login(username, password);
+            System.out.println("Logged in as " + auth.username() + ".");
+            return auth;
+        } catch (ClientException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
     }
 
     private AuthData handleRegister() {
