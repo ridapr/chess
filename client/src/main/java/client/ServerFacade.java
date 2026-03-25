@@ -25,12 +25,13 @@ public class ServerFacade {
         return request("POST", "/user", body, null, AuthData.class);
     }
 
-    public AuthData login() throws ClientException {
-        return null;
+    public AuthData login(String username, String password) throws ClientException {
+        var body = Map.of("username", username, "password", password);
+        return request("POST", "/session", body, null, AuthData.class);
     }
 
-    public AuthData logout() throws ClientException {
-        return null;
+    public void logout(String authToken) throws ClientException {
+        request("DELETE", "/session", null, authToken, Void.class);
     }
 
 
@@ -49,7 +50,7 @@ public class ServerFacade {
     }
 
     public void clear() throws ClientException {
-
+        request("DELETE", "/db", null, null, Void.class);
     }
 
 

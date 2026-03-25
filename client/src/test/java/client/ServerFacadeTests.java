@@ -27,6 +27,10 @@ public class ServerFacadeTests {
     }
 
 
+    @BeforeEach
+    void clear() throws Exception {
+        facade.clear();
+    }
 //    @Test
 //    public void sampleTest() {
 //        Assertions.assertTrue(true);
@@ -39,8 +43,41 @@ public class ServerFacadeTests {
         assertTrue(auth.authToken().length() > 10);
         assertEquals("alice", auth.username());
 
-
     }
+    @Test
+    void registerNegativeDupliate() throws Exception {
+       facade.register("byu", "password", "byu@example.com");
+       assertThrows(ClientException.class, () -> facade.register(
+               "byu", "diffpassword", "byu2@example.com"));
+    }
+
+
+    @Test
+    void loginPositive() throws Exception {
+        facade.register("obama", "password", "obama@example.com");
+        AuthData auth = facade.login("obama", "password");
+        assertNotNull(auth.authToken());
+        assertEquals("obama", auth.username());
+    }
+    @Test
+    void loginNegativeWrongPassword() throws Exception {
+        facade.register("foo", "password", "foo@e.com");
+        assertThrows(ClientException.class, () -> facade.login("foo", "wrongpassword"));
+    }
+
+
+    @Test
+    void logoutPositive() throws Exception {
+        AuthData auth = facade.register("coug", "password", "coug@e.com");
+        assertDoesNotThrow(() -> facade.logout(auth.authToken()));
+    }
+    @Test
+    void logoutNegativeInvalidToken() {
+        assertThrows(ClientException.class, () -> facade.logout("notoken"));
+    }
+
+
+
 
 
 
