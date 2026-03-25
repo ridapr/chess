@@ -15,7 +15,7 @@ public class PreLoginUI {
 
     // returns auth data when user logs in
     public AuthData run() {
-        System.out.println("Welcome. type help");
+        System.out.println("Welcome. Type help to view commands.");
 
         while (true) {
             System.out.print("[LOGGED OUT] >>> ");
@@ -59,7 +59,7 @@ public class PreLoginUI {
 
         try {
             AuthData auth = server.login(username, password);
-            System.out.println("Logged in as " + auth.username() + ".");
+//            System.out.println("Logged in as " + auth.username() + ".");
             return auth;
         } catch (ClientException ex) {
             System.out.println(ex.getMessage());

@@ -5,6 +5,7 @@ import chess.ChessGame;
 import chess.ChessBoard;
 import model.GameData;
 import model.AuthData;
+import ui.DrawBoardUI;
 
 import java.util.Scanner;
 import java.util.Collection;
@@ -36,7 +37,7 @@ public class PostLoginUI {
                 case "help" -> printHelp();
                 case "list" -> handleList();
                 case "create" -> handleCreate();
-                case "play" -> System.out.println("play wip");
+                case "play" -> handlePlay();
                 case "observe" -> System.out.println("observe wip");
                 case "logout" -> { handleLogout(); return true; }
                 case "quit" -> { return false;}
@@ -83,7 +84,6 @@ public class PostLoginUI {
         }
     }
 
-
     private void handleList() {
         try {
             Collection<GameData> games = server.listGames(auth.authToken());
@@ -105,6 +105,48 @@ public class PostLoginUI {
         }
     }
 
+    private void handlePlay() {
+        if (gameList.isEmpty()) {
+            System.out.println("Run 'list' first to see all games");
+            return;
+        }
+
+        System.out.print("Game number: ");
+        String line = scanner.nextLine().trim();
+        int num = 0;
+        try {
+            num = Integer.parseInt(line);
+        } catch (NumberFormatException ex) {
+            num = -1;
+        }
+        if (num < 1 || num > gameList.size()) {
+            System.out.println("Error: invalid game number.");
+            return;
+        }
+
+        System.out.print("Color (WHITE/BLACK): ");
+        String color = scanner.nextLine().trim().toUpperCase();
+        if (!color.equals("WHITE") && !color.equals("BLACK")) {
+            System.out.println("Error: color has to be WHITE or BLACK.");
+            return;
+        }
+
+        GameData game = gameList.get(num - 1);
+        try {
+            server.joinGame(game.gameID(), color, auth.authToken());
+            System.out.println("Joined game '" + game.gameName() + "' as " + color);
+            drawBoard(color);
+        } catch (ClientException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+
+    private void drawBoard(String color) {
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        DrawBoardUI.draw(board, color);
+    }
 
 
 }
