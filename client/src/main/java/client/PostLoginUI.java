@@ -7,11 +7,16 @@ import model.GameData;
 import model.AuthData;
 
 import java.util.Scanner;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostLoginUI {
     private final ServerFacade server;
     private final Scanner scanner;
     private final AuthData auth;
+
+    private List<GameData> gameList = new ArrayList<>();
 
     public PostLoginUI(ServerFacade server,  Scanner scanner, AuthData auth) {
         this.server = server;
@@ -29,7 +34,7 @@ public class PostLoginUI {
 
             switch (cmd) {
                 case "help" -> printHelp();
-                case "list" -> System.out.println("list wip");
+                case "list" -> handleList();
                 case "create" -> handleCreate();
                 case "play" -> System.out.println("play wip");
                 case "observe" -> System.out.println("observe wip");
@@ -78,6 +83,27 @@ public class PostLoginUI {
         }
     }
 
+
+    private void handleList() {
+        try {
+            Collection<GameData> games = server.listGames(auth.authToken());
+            gameList = new ArrayList<>(games);
+            if (gameList.isEmpty()) {
+                System.out.println("No games exist.");
+                return;
+            }
+            System.out.println("Games:");
+            for (int i = 0; i< gameList.size(); i++) {
+                GameData gd = gameList.get(i);
+                String white = gd.whiteUsername() != null ? gd.whiteUsername() : "(open)";
+                String black = gd.blackUsername() != null ? gd.blackUsername() : "(open)";
+                System.out.printf(" %d. %s [White: %s | Black: %s]%n", i+1, gd.gameName(), white, black);
+            }
+
+        } catch (ClientException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
 
 
 
